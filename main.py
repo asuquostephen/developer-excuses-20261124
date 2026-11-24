@@ -9,11 +9,22 @@ No network.
 import os
 import sys
 
-LINE = "It works on my machine — somebody must have changed something in production over the weekend."
+LINE = "It works on my machine — and since someone shipped my laptop's Docker image to production by mistake, for about three minutes it worked there too."
 MAX_CHARS = 200
 
 
+def check_line() -> int:
+    """Return the character count of the line."""
+    return len(LINE)
+
+
 def main() -> int:
+    if "--check" in sys.argv[1:]:
+        chars = check_line()
+        nbytes = len(LINE.encode("utf-8"))
+        print(f"{chars} characters, {nbytes} bytes, 1 line")
+        ok = 1 <= chars <= MAX_CHARS and bool(LINE.strip()) and "\n" not in LINE
+        return 0 if ok else 1
     data = LINE.encode("utf-8")
     if not (1 <= len(LINE) <= MAX_CHARS):
         print(f"line must be 1-{MAX_CHARS} characters, got {len(LINE)}", file=sys.stderr)
